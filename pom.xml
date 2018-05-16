@@ -35,7 +35,11 @@
 			<artifactId>gt-swing</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
-
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-epsg-hsql</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>

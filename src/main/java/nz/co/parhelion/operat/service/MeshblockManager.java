@@ -320,11 +320,14 @@ public class MeshblockManager {
             ReferencedEnvelope env = collection.getBounds();
             Geometry geom = JTS.toGeometry( env );
             
+
     		try {
-    			CoordinateReferenceSystem nzgd2000 = CRS.decode("EPSG:2193");
-    			if (!nzgd2000.getName().equals(addressCRS.getName())) {
+
     			
-    				MathTransform transform = CRS.findMathTransform(nzgd2000, latLng, true);
+    			CoordinateReferenceSystem nzgd2000 = CRS.decode("EPSG:2193", true);
+    			
+    			if (!nzgd2000.getName().equals(addressCRS.getName())) {
+    				MathTransform transform = CRS.findMathTransform(addressCRS, nzgd2000, true);
     				geom = JTS.transform(geom, transform);
     			}
     		} catch (FactoryException | MismatchedDimensionException | TransformException e) {
