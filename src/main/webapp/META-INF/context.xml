@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/operat" debug="1" reloadable="true">
+<Resource name="jdbc/operat" auth="Container" type="javax.sql.DataSource" 
+	driverClassName="org.postgresql.Driver"
+	url="jdbc:postgresql://localhost:5432/operat" username="operat"
+	password="0ld3rPeop1e" maxActive="40" maxIdle="10" maxWait="100" />
+</Context>
