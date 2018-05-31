@@ -187,6 +187,7 @@ public class AssessmentSheetManager {
 		table = new Table(new float[]{20, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5});
 		table.setFixedLayout();
 		table.setWidthPercent(100);
+		table.setKeepTogether(true);
 		
 		table.addHeaderCell(new Cell(2,1).setPadding(4).add(new Paragraph("Name or number of property")));
 		table.addHeaderCell(new Cell(1,2).setPadding(4).add(new Paragraph("17. Are there trees in the garden?")));
@@ -208,17 +209,17 @@ public class AssessmentSheetManager {
 
 		table.addHeaderCell(new Cell().add("TOTAL (from previous)"));
 		table.addHeaderCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
-		table.addHeaderCell(new Cell().setBackgroundColor(Color.BLACK));
+		table.addHeaderCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
 		table.addHeaderCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
-		table.addHeaderCell(new Cell().setBackgroundColor(Color.BLACK));
-		table.addHeaderCell(new Cell().setBackgroundColor(Color.BLACK));
+		table.addHeaderCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
+		table.addHeaderCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
 		table.addHeaderCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
-		table.addHeaderCell(new Cell().setBackgroundColor(Color.BLACK));
-		table.addHeaderCell(new Cell().setBackgroundColor(Color.BLACK));
-		table.addHeaderCell(new Cell().setBackgroundColor(Color.BLACK));
+		table.addHeaderCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
+		table.addHeaderCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
+		table.addHeaderCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
 		table.addHeaderCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
-		table.addHeaderCell(new Cell().setBackgroundColor(Color.BLACK));
-		table.addHeaderCell(new Cell().setBackgroundColor(Color.BLACK));
+		table.addHeaderCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
+		table.addHeaderCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
 		
 		table.setSkipFirstHeader(true);
 		
@@ -244,7 +245,7 @@ public class AssessmentSheetManager {
 			if (address == null) {
 				continue;
 			}
-			table.addCell(new Cell().setFontColor(Color.BLUE).add(address));
+			table.addCell(new Cell().setFontColor(Color.BLUE).add(address).setKeepTogether(true));
 			table.addCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
 			table.addCell(new Cell());
 			table.addCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
@@ -261,33 +262,33 @@ public class AssessmentSheetManager {
 		
 		table.addCell(new Cell().add("GRAND TOTAL").setFont(bold));
 		table.addCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
-		table.addCell(new Cell().setBackgroundColor(Color.BLACK));
+		table.addCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
 		table.addCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
-		table.addCell(new Cell().setBackgroundColor(Color.BLACK));
-		table.addCell(new Cell().setBackgroundColor(Color.BLACK));
+		table.addCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
+		table.addCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
 		table.addCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
-		table.addCell(new Cell().setBackgroundColor(Color.BLACK));
-		table.addCell(new Cell().setBackgroundColor(Color.BLACK));
-		table.addCell(new Cell().setBackgroundColor(Color.BLACK));
+		table.addCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
+		table.addCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
+		table.addCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
 		table.addCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
-		table.addCell(new Cell().setBackgroundColor(Color.BLACK));
-		table.addCell(new Cell().setBackgroundColor(Color.BLACK));
+		table.addCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
+		table.addCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
 		
 		table.setSkipLastFooter(true);
 		
 		table.addFooterCell(new Cell().add("TOTAL").setFont(bold));
 		table.addFooterCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
-		table.addFooterCell(new Cell().setBackgroundColor(Color.BLACK));
+		table.addFooterCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
 		table.addFooterCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
-		table.addFooterCell(new Cell().setBackgroundColor(Color.BLACK));
-		table.addFooterCell(new Cell().setBackgroundColor(Color.BLACK));
+		table.addFooterCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
+		table.addFooterCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
 		table.addFooterCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
-		table.addFooterCell(new Cell().setBackgroundColor(Color.BLACK));
-		table.addFooterCell(new Cell().setBackgroundColor(Color.BLACK));
-		table.addFooterCell(new Cell().setBackgroundColor(Color.BLACK));
+		table.addFooterCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
+		table.addFooterCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
+		table.addFooterCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
 		table.addFooterCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)));
-		table.addFooterCell(new Cell().setBackgroundColor(Color.BLACK));
-		table.addFooterCell(new Cell().setBackgroundColor(Color.BLACK));
+		table.addFooterCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
+		table.addFooterCell(new Cell().setBackgroundColor(Color.LIGHT_GRAY));
 		document.add(table);
 		document.close();
 		
