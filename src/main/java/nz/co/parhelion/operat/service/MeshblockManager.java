@@ -44,6 +44,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.io.WKTWriter;
 
 import nz.co.parhelion.operat.dao.ResultsDAO;
+import nz.co.parhelion.operat.model.DisplayResult;
 import nz.co.parhelion.operat.model.Meshblock;
 
 @Service
@@ -67,6 +68,13 @@ public class MeshblockManager {
 	public void setStreetShapeFile(String file) {
 		this.streetShapeFile = file;
 	}
+	
+	public ReferencedEnvelope getLatLngEnvelope(double lat1, double lat2, double lng1, double lng2) {
+		CoordinateReferenceSystem latLng = DefaultGeographicCRS.WGS84;
+		ReferencedEnvelope envelope = new ReferencedEnvelope(lat1, lat2, lng1, lng2, latLng);
+		return envelope;
+	}
+	
 	public Meshblock getContainingMeshblock(double lat, double lng) throws IOException {
 		
 		FileDataStore meshblocks = FileDataStoreFinder.getDataStore(new File(meshShapeFile));
@@ -346,6 +354,12 @@ public class MeshblockManager {
         
         
         
+	}
+	
+	public List<DisplayResult> getResults(ReferencedEnvelope bounds) {
+		
+		return dao.getResults(bounds);
+		
 	}
 	
 } 

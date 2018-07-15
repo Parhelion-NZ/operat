@@ -27,12 +27,12 @@ public class OperatForm {
 	public enum Q13 { RESIDENTIAL, GREEN, INDUSTRIAL };
 	public Q13 q13;
 	
-	public boolean q14, q15, q16;
+	public boolean q14, q15, q16, q17;
 	
 	//actual numbers
-	public int q17, q18, q19, q20;
+	public int q18, q19, q20, q21;
 	
-	public int q17No, q18No, q18Na, q19Mod, q19Poor, q19Na, q20Mod, q20Poor;
+	public int q18No, q19No, q19Na, q20Mod, q20Poor, q20Na, q21Mod, q21Poor;
 	
 
 }

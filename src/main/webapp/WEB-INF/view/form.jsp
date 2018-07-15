@@ -5,7 +5,15 @@
 <head>
 <meta charset="utf-8" />
 <title>Welcome</title>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-104411886-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'UA-104411886-3');
+</script>
 <!-- Meta information-->
 <meta name="keywords"
 	content="operat, environment, Older Peoples External Residential Assessment Tool, Older People, External Residential Assessment, Residential Assessment Tool, assessment centre for ageing, ageing, research, OPAN, wales, cymru, older people, health, social care, CADR" />
@@ -240,7 +248,7 @@
 				</div>
 			</div>
 			<div class="form-row">
-				<div class="col-md-3">Are there any unlit alleyways?</div>
+				<div class="col-md-3">Are there any unlit streets or alleyways?</div>
 				<div class="col-md-6">
 					<div class="form-check"><label class="form-check-label"><input class="form-check-input" name="q5" type="radio" required="required"value="true">Yes</label></div>
 					<div class="form-check"><label class="form-check-label"><input class="form-check-input" name="q5" type="radio" required="required"value="false">No</label></div>
@@ -256,7 +264,7 @@
 				</div>
 			</div>
 			<div class="form-row">
-				<div class="col-md-3">Are there loud traffic or industrial noises?</div>
+				<div class="col-md-3">Are there loud traffic, industrial or other noises?</div>
 				<div class="col-md-6">
 					<div class="form-check"><label class="form-check-label"><input class="form-check-input" name="q7" type="radio" required="required"value="true">Yes</label></div>
 					<div class="form-check"><label class="form-check-label"><input class="form-check-input" name="q7" type="radio" required="required"value="false">No</label></div>
@@ -338,8 +346,17 @@
 			<div class="form-row">
 				<div class="col-md-3">I can talk to people in this area</div>
 				<div class="col-md-6">
-					<div class="form-check"><label class="form-check-label"><input class="form-check-input" name="q16" type="radio" required="required" value="true" data-weighting="2" data-domain="natural">Yes</label></div>
-					<div class="form-check"><label class="form-check-label"><input class="form-check-input" name="q16" type="radio" required="required" value="false" data-weighting="2" data-domain="natural" >No</label></div>
+					<div class="form-check"><label class="form-check-label"><input class="form-check-input" name="q16" type="radio" required="required" value="true" data-weighting="2" >Yes</label></div>
+					<div class="form-check"><label class="form-check-label"><input class="form-check-input" name="q16" type="radio" required="required" value="false" data-weighting="2">No</label></div>
+					<div class="invalid-feedback">An answer is required.</div>
+				</div>
+			</div>
+			
+			<div class="form-row">
+				<div class="col-md-3">Are there any bus stops or railway stations within the meshblock?</div>
+				<div class="col-md-6">
+					<div class="form-check"><label class="form-check-label"><input class="form-check-input" name="q17" type="radio" required="required" value="true" data-weighting="2" data-domain="natural">Yes</label></div>
+					<div class="form-check"><label class="form-check-label"><input class="form-check-input" name="q17" type="radio" required="required" value="false" data-weighting="2" data-domain="natural" >No</label></div>
 					<div class="invalid-feedback">An answer is required.</div>
 				</div>
 			</div>
@@ -362,41 +379,17 @@
 				</div>
 				<div class="tab-pane fade show active" id="summary" role="tabpanel" aria-labelledby="summary-tab">
 					<b>In this section, please enter the number of properties that fit the criteria</b>
-					<div class="form-row align-items-center" id="q17row">
+					<div class="form-row align-items-center" id="q18row">
 						<div class="col-md-3">
 						<p class="mt-4 pt-3">Are there trees in their garden</p>
 						</div>
 						<div class="col-md-1">
-							<label for="q17">Yes</label>
-							<input type="number" class="form-control" id="numberTrees" name="q17" />
+							<label for="q18">Yes</label>
+							<input type="number" class="form-control" id="numberTrees" name="q18" />
 						</div>
 						<div class="col-md-1">
-							<label for="q17No">No</label>
-							<input type="number" class="form-control" id="numberTreesNo" name="q17No"  />
-						</div>
-					</div>
-					<div class="form-row invalid-feedback" id="q17bad">
-						<div class="col-md-3"></div>
-						<div class="col-md-9">
-							These must add to the total number of properties
-						</div>
-					</div>
-					
-					<div class="form-row align-items-center" id="q18row">
-						<div class="col-md-3">
-						<p class="mt-4 pt-3">Is there any external beautification</p>
-						</div>
-						<div class="col-md-2">
-							<label for="q18">Yes</label>
-							<input type="number" class="form-control" id="numberPretty" name="q18"  />
-						</div>
-						<div class="col-md-2">
 							<label for="q18No">No</label>
-							<input type="number" class="form-control" id="numberPrettyNo" name="q18No"  />
-						</div>
-						<div class="col-md-2">
-							<label for="q18Na">N/A</label>
-							<input type="number" class="form-control" id="numberPrettyNa" name="q18Na"  />
+							<input type="number" class="form-control" id="numberTreesNo" name="q18No"  />
 						</div>
 					</div>
 					<div class="form-row invalid-feedback" id="q18bad">
@@ -408,23 +401,19 @@
 					
 					<div class="form-row align-items-center" id="q19row">
 						<div class="col-md-3">
-						<p class="mt-4 pt-3">How well maintained is the garden</p>
+						<p class="mt-4 pt-3">Is there any external beautification</p>
 						</div>
 						<div class="col-md-2">
-							<label for="q19">Well</label>
-							<input type="number" class="form-control" id="numberGarden" name="q19"  />
+							<label for="q19">Yes</label>
+							<input type="number" class="form-control" id="numberPretty" name="q19"  />
 						</div>
 						<div class="col-md-2">
-							<label for="q19Mod">Moderate</label>
-							<input type="number" class="form-control" id="numberGardenMod" name="q19Mod"  />
-						</div>
-						<div class="col-md-2">
-							<label for="q19Poor">Poor</label>
-							<input type="number" class="form-control" id="numberGardenPoor" name="q19Poor"  />
+							<label for="q19No">No</label>
+							<input type="number" class="form-control" id="numberPrettyNo" name="q19No"  />
 						</div>
 						<div class="col-md-2">
 							<label for="q19Na">N/A</label>
-							<input type="number" class="form-control" id="numberGardenNa" name="q19Na"  />
+							<input type="number" class="form-control" id="numberPrettyNa" name="q19Na"  />
 						</div>
 					</div>
 					<div class="form-row invalid-feedback" id="q19bad">
@@ -436,22 +425,50 @@
 					
 					<div class="form-row align-items-center" id="q20row">
 						<div class="col-md-3">
-							<p class="mt-4 pt-3">How well maintained is the outside of the property</p>
+						<p class="mt-4 pt-3">How well maintained is the garden</p>
 						</div>
 						<div class="col-md-2">
 							<label for="q20">Well</label>
-							<input type="number" class="form-control" id="numberPrettyOutside" name="q20"  />
+							<input type="number" class="form-control" id="numberGarden" name="q20"  />
 						</div>
 						<div class="col-md-2">
 							<label for="q20Mod">Moderate</label>
-							<input type="number" class="form-control" id="numberPrettyOutsideMod" name="q20Mod"  />
+							<input type="number" class="form-control" id="numberGardenMod" name="q20Mod"  />
 						</div>
 						<div class="col-md-2">
 							<label for="q20Poor">Poor</label>
-							<input type="number" class="form-control" id="numberPrettyOutsidePoor" name="q20Poor"  />
+							<input type="number" class="form-control" id="numberGardenPoor" name="q20Poor"  />
+						</div>
+						<div class="col-md-2">
+							<label for="q20Na">N/A</label>
+							<input type="number" class="form-control" id="numberGardenNa" name="q20Na"  />
 						</div>
 					</div>
 					<div class="form-row invalid-feedback" id="q20bad">
+						<div class="col-md-3"></div>
+						<div class="col-md-9">
+							These must add to the total number of properties
+						</div>
+					</div>
+					
+					<div class="form-row align-items-center" id="q21row">
+						<div class="col-md-3">
+							<p class="mt-4 pt-3">How well maintained is the outside of the property</p>
+						</div>
+						<div class="col-md-2">
+							<label for="q21">Well</label>
+							<input type="number" class="form-control" id="numberPrettyOutside" name="q21"  />
+						</div>
+						<div class="col-md-2">
+							<label for="q21Mod">Moderate</label>
+							<input type="number" class="form-control" id="numberPrettyOutsideMod" name="q21Mod"  />
+						</div>
+						<div class="col-md-2">
+							<label for="q21Poor">Poor</label>
+							<input type="number" class="form-control" id="numberPrettyOutsidePoor" name="q21Poor"  />
+						</div>
+					</div>
+					<div class="form-row invalid-feedback" id="q21bad">
 						<div class="col-md-3"></div>
 						<div class="col-md-9">
 							These must add to the total number of properties
@@ -587,20 +604,7 @@
 			
 		});
  		
- 		var q17total = parseInt($('#numberTrees').val()) + parseInt($('#numberTreesNo').val());
- 		if (q17total === total) {
- 			$('#q17row').removeClass('invalid');	
- 			$('#q17bad').removeClass('invalid');
- 		} else {
- 			bad = true;
- 			$('#q17row').addClass('invalid');	
- 			$('#q17bad').addClass('invalid');
- 		}
- 		
- 		var q18total = 
- 			parseInt($('#numberPretty').val()) + 
- 			parseInt($('#numberPrettyNo').val()) + 
- 			parseInt($('#numberPrettyNa').val());
+ 		var q18total = parseInt($('#numberTrees').val()) + parseInt($('#numberTreesNo').val());
  		if (q18total === total) {
  			$('#q18row').removeClass('invalid');	
  			$('#q18bad').removeClass('invalid');
@@ -611,10 +615,9 @@
  		}
  		
  		var q19total = 
- 			parseInt($('#numberGarden').val()) + 
- 			parseInt($('#numberGardenMod').val()) + 
- 			parseInt($('#numberGardenPoor').val()) +
- 			parseInt($('#numberGardenNa').val());
+ 			parseInt($('#numberPretty').val()) + 
+ 			parseInt($('#numberPrettyNo').val()) + 
+ 			parseInt($('#numberPrettyNa').val());
  		if (q19total === total) {
  			$('#q19row').removeClass('invalid');	
  			$('#q19bad').removeClass('invalid');
@@ -625,9 +628,10 @@
  		}
  		
  		var q20total = 
- 			parseInt($('#numberPrettyOutside').val()) + 
- 			parseInt($('#numberPrettyOutsideMod').val()) + 
- 			parseInt($('#numberPrettyOutsidePoor').val());
+ 			parseInt($('#numberGarden').val()) + 
+ 			parseInt($('#numberGardenMod').val()) + 
+ 			parseInt($('#numberGardenPoor').val()) +
+ 			parseInt($('#numberGardenNa').val());
  		if (q20total === total) {
  			$('#q20row').removeClass('invalid');	
  			$('#q20bad').removeClass('invalid');
@@ -635,6 +639,19 @@
  			bad = true;
  			$('#q20row').addClass('invalid');	
  			$('#q20bad').addClass('invalid');
+ 		}
+ 		
+ 		var q21total = 
+ 			parseInt($('#numberPrettyOutside').val()) + 
+ 			parseInt($('#numberPrettyOutsideMod').val()) + 
+ 			parseInt($('#numberPrettyOutsidePoor').val());
+ 		if (q21total === total) {
+ 			$('#q21row').removeClass('invalid');	
+ 			$('#q21bad').removeClass('invalid');
+ 		} else {
+ 			bad = true;
+ 			$('#q21row').addClass('invalid');	
+ 			$('#q21bad').addClass('invalid');
  		}
  		
  		
@@ -678,9 +695,9 @@
 		var parking = form.q9.value == "NOT_RESIDENTS" ? 2 : 0;
 		var outlook = form.q13.value == "INDUSTRIAL" ? 3 : 0;
 		
-		var beautificationPercentage = form.q18.value / form.numberOfProperties.value;
-		var gardenPercentage = form.q19.value / form.numberOfProperties.value;
-		var propertyPercentage = form.q20.value / form.numberOfProperties.value;
+		var beautificationPercentage = form.q19.value / form.numberOfProperties.value;
+		var gardenPercentage = form.q20.value / form.numberOfProperties.value;
+		var propertyPercentage = form.q21.value / form.numberOfProperties.value;
 		
 		var beautification = 0;
 		if (beautificationPercentage <= .2) {
@@ -747,10 +764,10 @@
 	}
 
 	function calculateNaturalElements(form) {
-		var treePercentage = form.q17.value / form.numberOfProperties.value;
+		var treePercentage = form.q18.value / form.numberOfProperties.value;
 		
-		var grass = form.q1.value == "TRUE" ? 0 : 2;
-		var nature = form.q2.value == "TRUE" ? 0 : 4;
+		var grass = form.q1.value == "true" ? 0 : 2;
+		var nature = form.q2.value == "true" ? 0 : 4;
 		var trees = 0;
 		if (treePercentage < .02) {
 			trees = 1;

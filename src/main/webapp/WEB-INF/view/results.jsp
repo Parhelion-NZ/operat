@@ -114,6 +114,12 @@ var debug = false;
 var isCycleLoading = false;
 var isDocumentReady = false;
 
+var heatmaps = {
+	green: {},
+	orange: {},
+	red: {}
+}
+
 function consoleDebug(message){
 	if(debug == true){
 		consoleWrapper(message);
@@ -360,7 +366,7 @@ if($(".js-image").length > 0){
 		$(".container--dataentry").addClass("js-hide");
 		$(".container--datacontent").removeClass("js-hide");
 		$.ajax({
-			url: "?ajax=operatdata&id=" + dataID,
+			url: "${pageContext.request.contextPath}/results/" + dataID,
 			processData: false,
 			method: "post",
 			dataType: "json",
@@ -397,14 +403,14 @@ if($(".js-image").length > 0){
 
 				var customLocation = 'wellington, new zealand';
 				// Set default location, just in case
-				// var latLng = new google.maps.LatLng( 52.435482, -4.055578 );
+				var latLng = new google.maps.LatLng( -41.286460, 174.776236 );
 
 				var geocoder = new google.maps.Geocoder();
 				geocoder.geocode({ 'address': customLocation }, function(results, status) {
 
 					if (status == google.maps.GeocoderStatus.OK){
 
-						latLng = new google.maps.LatLng( results[0].geometry.location.lat(), results[0].geometry.location.lng() );
+						latLng = new google.maps.LatLng(-41.286460, 174.776236);// results[0].geometry.location.lat(), results[0].geometry.location.lng() );
 
 						var heatmap = null;
 
@@ -581,10 +587,36 @@ if($(".js-image").length > 0){
 				            drawMesh(e.latLng, map);
 				        });
 				      	
+
+				    	google.maps.event.addListener(map, "bounds_changed", function() {
+				    	   // send the new bounds back to your server
+				    	   console.log("map bounds ",map.getBounds().toJSON());
+//				    	   http://localhost:82/operat/results/174.85434354888253,-41.21126571507782/174.93674100982003,-41.18995441845707/
+							var sw = map.getBounds().getSouthWest();
+							var url = 'http://localhost:82/operat/results/'+sw.lng()+','+sw.lat()+'/';
+							var ne = map.getBounds().getNorthEast();
+							url += ne.lng() + ','+ne.lat() + '/';
+							console.log(url);
+				    	});
+				      	
 						autocomplete.addListener('place_changed', function() {
 							var place = autocomplete.getPlace();
 							drawMesh(place.geometry.location, map);
 						});
+						
+						/* CSJM Markers start */
+
+						jQuery.ajax({
+					    	url: '${pageContext.request.contextPath}/results',
+					    	success : function(response) {
+					    		
+					    		console.log(response);
+					    		drawHeatMap(response, map);
+
+					    	}
+					    });
+						
+						/* CSJM Markers end */
 
 					} else {
 						console.log(' > Error: we could not load the geoLocation ' + status );
@@ -947,10 +979,6 @@ function setupEvents(){
 
 	consoleWrapper("Attaching events...");
 
-	// Toggle the navigation class
-	// $("#js-nav__toggle").on("click", function(){
-	// 	$('.nav').toggleClass("menu__show");
-	// });
 
 
 	$(".js-toggle").each(function(){
@@ -962,14 +990,16 @@ function setupEvents(){
 
 
 	$(".domain-option").on("click", function(e){
+		var self = this;
 		e.preventDefault;
-		var postcode = $("#location").val();
-		var link = $(this).attr("href")
-		if (postcode != ""){
-			window.location = link + "&location=" + postcode;
-		} else {
-			window.location = link;
-		}
+/* 		
+		heatmaps.green.setData(heatmaps.data[this.dataset.option].green);
+		heatmaps.orange.setData(heatmaps.data[this.dataset.option].orange);
+		heatmaps.red.setData(heatmaps.data[this.dataset.option].red);
+ */
+		heatmaps.shapes.forEach(function(shape) {
+			shape.poly.setOptions({strokeColor: shape[self.dataset.option], fillColor: shape[self.dataset.option]});
+		});
 		return false;
 	});
 	
@@ -1036,8 +1066,6 @@ function drawMeshblock(wkt, map) {
 	map.fitBounds(getPolyBounds(poly));
 	existingPolys.push(poly);
 	
-	
-	
 }
 
 function getPolyBounds(poly) {
@@ -1057,14 +1085,14 @@ function getPolyBounds(poly) {
 function AddPoints(data){
 	 
     //first spilt the string into individual points
-    var pointsData=data.split(", ");
+    var pointsData=data.split(",");
     
     
     //iterate over each points data and create a latlong
     //& add it to the cords array
     var len=pointsData.length;
     for (var i=0;i<len;i++) {
-         var xy=pointsData[i].split(" ");
+         var xy=pointsData[i].trim().split(" ");
 
         var pt=new google.maps.LatLng(xy[1],xy[0]);
         ptsArray.push(pt);
@@ -1081,9 +1109,7 @@ function drawMesh(location, map) {
     jQuery.ajax({
     	url: '${pageContext.request.contextPath}/meshblock?lat='+location.lat()+'&lng='+location.lng(),
     	success : function(response) {
-    		console.log(response);
     		drawMeshblock(response.wkt, map);
-    		console.log(response.addresses);
 //    		$('#addresses').text(response.addresses);
 
 			var hasAddresses = response.addresses.length;
@@ -1098,6 +1124,242 @@ function drawMesh(location, map) {
     });
 
   }
+  
+function drawHeatMap(results, map) {
+	
+	/* var greenHeatmapOverall = [];
+	var orangeHeatmapOverall = [];
+	var redHeatmapOverall = [];
+			
+	var naturalElementsGreen = [];
+	var naturalElementsOrange = [];
+	var naturalElementsRed = [];
+	
+	var incivilitiesGreen = [];
+	var incivilitiesOrange = [];
+	var incivilitiesRed = [];
+	
+	var navigationGreen = [];
+	var navigationOrange = [];
+	var navigationRed = [];
+	
+	var territorialGreen = [];
+	var territorialOrange = [];
+	var territorialRed = [];
+	 */	
+	var locations = [];
+	
+	heatmaps.shapes = [];
+	
+	var regex = /\(([^()]+)\)/g;
+		
+	results.forEach(function(val) {
+		
+		var green = "rgb(0,200,0)";
+		var orange = "rgb(200,160,0)";
+		var red = "rgb(255,0,0)";
+		var colourOverall;
+		if (val.operatScore < 33) {
+			//greenHeatmapOverall.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourOverall = green;
+		} else if (val.operatScore < 66) {
+			//orangeHeatmapOverall.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourOverall = orange;
+		} else {
+			//redHeatmapOverall.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourOverall = red;
+		}
+		
+		if (val.naturalElementsScore < 7) {
+			//naturalElementsGreen.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourNaturalElements = green;
+		} else if (val.naturalElementsScore < 14) {
+			//naturalElementsOrange.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourNaturalElements = orange;
+		} else {
+			//naturalElementsRed.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourNaturalElements = red;
+		}
+		
+		if (val.incivilitiesScore < 7) {
+			//incivilitiesGreen.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourIncivilities = green;
+		} else if (val.incivilitiesScore < 14) {
+			//incivilitiesOrange.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourIncivilities = orange;
+		} else {
+			//incivilitiesRed.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourIncivilities = red;
+		}
+
+		if (val.territorialScore < 7) {
+			//territorialGreen.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourTerritorial = green;
+		} else if (val.territorialScore < 14) {
+			//territorialOrange.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourTerritorial = orange;
+		} else {
+			//territorialRed.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourTerritorial = red;
+		}
+		
+		if (val.navigationScore < 13) {
+			//navigationGreen.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourNavigation = green;
+		} else if (val.navigationScore < 27) {
+			//navigationOrange.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourNavigation = orange;
+		} else {
+			//navigationRed.push({location: new google.maps.LatLng(val.lat, val.lng)});
+			colourNavigation = red;
+		}
+		
+		var Rings = [];
+		ptsArray = [];
+		var parsed;
+		while( parsed = regex.exec(val.geom) ) {
+			Rings.push( parsed[1] );
+		}
+		var polyLen=Rings.length;
+		
+		//now we need to draw the polygon for each of inner rings, but reversed
+		for(var i=0;i<polyLen;i++){
+	    	AddPoints(Rings[i]);
+		}
+
+		var poly = new google.maps.Polygon({
+		    paths: ptsArray,
+		    strokeColor: colourOverall,
+		    strokeOpacity: 0.8,
+		    strokeWeight: 2,
+		    fillColor: colourOverall,
+		    fillOpacity: 0.35
+		});
+
+		heatmaps.shapes.push({
+			poly: poly, 
+			overall: colourOverall, 
+			naturalElements: colourNaturalElements, 
+			incivilities: colourIncivilities,
+			territorial: colourTerritorial,
+			navigation: colourNavigation
+		});
+		
+		poly.setMap(map);
+		
+		locations.push({ position: { lat: val.lat, lng: val.lng }, title: val.meshblockId , dataid: val.resultId });
+	});
+	
+/* 	heatmaps.data = {
+		"overall":{
+			"red":redHeatmapOverall,
+			"green":greenHeatmapOverall,
+			"orange":orangeHeatmapOverall
+		},
+		"naturalElements": {
+			"red":naturalElementsRed,
+			"green":naturalElementsGreen,
+			"orange":naturalElementsOrange
+		},
+		"incivilities": {
+			"red":incivilitiesRed,
+			"green":incivilitiesGreen,
+			"orange":incivilitiesOrange
+		},
+		"territorial": {
+			"red":territorialRed,
+			"green":territorialGreen,
+			"orange":territorialOrange
+		},
+		"navigation": {
+			"red":navigationRed,
+			"green":navigationGreen,
+			"orange":navigationOrange
+		},
+		"raw": results
+	} */
+	
+    var markers = locations.map(function(location, i) {
+      return new google.maps.Marker({
+        position: location.position,
+        // label: location.title,
+        title: location.title,
+        dataID: location.dataid,
+        icon: "${pageContext.request.contextPath}/resources/img/map-pin.png"
+      });
+    });
+
+    for (m = 0; m < markers.length; m++){
+
+    	markers[m].setMap(map);
+
+		markers[m].addListener( "click", function() {
+
+			reloadOperatData( "#container--datacontent", parseInt( this.dataID ) );
+
+			// map.setZoom(8);
+			// map.setCenter( this.getPosition() );
+			map.panTo( this.getPosition() )
+
+		});
+
+    }
+	
+/* 	heatmaps.green = new google.maps.visualization.HeatmapLayer({
+		  data: greenHeatmapOverall,
+		  radius: 25,
+		  // opacity: 0.95,
+		  dissapating: false,
+		  //gradient: [ "rgba(0,200,0,0)", "rgba(0,200,0,1)", "rgba(0,200,0,1)", "rgba(0,200,0,1)", "rgba(0,200,0,1)"]
+	});
+
+	heatmaps.green.setMap(map);
+	
+	heatmaps.orange = new google.maps.visualization.HeatmapLayer({
+		  data: orangeHeatmapOverall,
+		  radius: 25,
+		  // opacity: 0.95,
+		  dissapating: false,
+		  //gradient:  [ "rgba(200,160,0,1)", "rgba(200,160,0,1)", "rgba(200,160,0,1)", "rgba(200,160,0,1)", "rgba(200,160,0,1)"]
+	});
+
+	heatmaps.orange.setMap(map);
+	
+	heatmaps.red = new google.maps.visualization.HeatmapLayer({
+		  data: redHeatmapOverall,
+		  radius: 25,
+		  // opacity: 0.95,
+		  dissapating: false,
+		  //gradient:  [ "rgba(255,0,0,1)", "rgba(255,0,0,1)", "rgba(255,0,0,1)", "rgba(255,0,0,1)", "rgba(255,0,0,1)"]
+	});
+
+	heatmaps.red.setMap(map); */
+	
+	// var markerCluster = new MarkerClusterer(map, markers,
+	//		{ imagePath: "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m" } ); 
+	            $("#js-mapfilter").on("submit", function(e){
+
+	            	e.preventDefault();
+
+					var customLocation = $("#location").val();
+
+					if (geocoder && map && (customLocation != "")){
+						geocoder.geocode({ 'address': customLocation }, function(results, status) {
+
+							if (status == google.maps.GeocoderStatus.OK){
+								// map.checkResize();
+								map.panTo(
+									new google.maps.LatLng( results[0].geometry.location.lat(), results[0].geometry.location.lng() )
+								);
+
+								$("#js-newpostcode").val( customLocation );
+							}
+
+						});
+					}
+
+	            });
+}
 
 
 </script>
@@ -1178,7 +1440,7 @@ for(c = 0; c < jsFiles.length; c++){
 
 		<div class="header--col  header--partners  tar">
 			<a class="logo  logo--swansea-uni" href="https://massey.ac.nz/" target="_blank">
-				<img class="logo__image" src="resources/img/massey-white-72.png" 
+				<img class="logo__image" src="${pageContext.request.contextPath}/resources/img/massey-white-72.png" 
 					 alt="Massey University" 
 					 title="Massey University (opens in new window)" />
 			</a>
@@ -1494,6 +1756,16 @@ function verifyStep2(){
 					Type an address, or click on the map to select a meshblock.				
 				</div>
 
+<div class="form-row  form-row--toggleoption">
+					<a href="#" class="js-toggle  filterexpand" data-target="#js-extraoptions" data-toggleclass="js-hide">
+						<i class="i--vac--right  i--plus">
+							<span class="hide-visually">Toggle</span>
+						</i>
+						Displaying all results for <br />
+						Overall Domain Score						
+					</a>
+				</div>
+
 			</fieldset>
 
 			<fieldset class="col  lg-9-16  md-9-16  sm-9-16  extraoptions  js-hide" id="js-extraoptions">
@@ -1504,13 +1776,13 @@ function verifyStep2(){
 											</span>
 					<div class="col  lg-11-16  md-11-16  sm-11-16  domain-options">		
 
-						<a href="?mode=nat_ele" class="domain-option">Natural Elements</a>
+						<a href="?mode=nat_ele" class="domain-option" data-option="naturalElements">Natural Elements</a>
 
-						<a href="?mode=inc_nui" class="domain-option">Incivilities and Nuisance</a>
+						<a href="?mode=inc_nui" class="domain-option" data-option="incivilities">Incivilities and Nuisance</a>
 
-						<a href="?mode=terr_fun" class="domain-option">Territorial Functioning</a>
+						<a href="?mode=terr_fun" class="domain-option" data-option="territorial">Territorial Functioning</a>
 
-						<a href="?mode=nav_mob" class="domain-option">Navigation and Mobility</a>
+						<a href="?mode=nav_mob" class="domain-option" data-option="navigation">Navigation and Mobility</a>
 						
 					</div>
 

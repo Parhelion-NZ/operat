@@ -3,6 +3,7 @@ package nz.co.parhelion.operat;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -10,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +27,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.vividsolutions.jts.geom.Geometry;
+
+import nz.co.parhelion.operat.model.DisplayResult;
 import nz.co.parhelion.operat.model.InvalidResultsException;
 import nz.co.parhelion.operat.model.Meshblock;
 import nz.co.parhelion.operat.model.MeshblockDTO;
@@ -131,6 +137,26 @@ public class SpatialController {
 	@RequestMapping("/app")
 	public String index() {
 		return "scrape";
+	}
+	
+	@RequestMapping("/results")
+	@ResponseBody
+	public List<DisplayResult> getResults() {
+		return manager.getResults(null);
+	}
+	
+	@RequestMapping("/results/{lat1},{lng1}/{lat2},{lng2}/")
+	@ResponseBody
+	public List<DisplayResult> getResults(@PathVariable double lat1, @PathVariable double lng1, @PathVariable double lat2, @PathVariable double lng2) {
+		System.out.println("Lng2 "+lng2);
+		ReferencedEnvelope env = manager.getLatLngEnvelope(lat1, lat2, lng1, lng2);
+		
+		return manager.getResults(env);
+	}
+	
+	@RequestMapping("/scores")
+	public String showResults() {
+		return "results";
 	}
 	
 	class TestMessage {

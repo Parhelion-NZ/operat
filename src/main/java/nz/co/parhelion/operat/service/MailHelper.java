@@ -37,7 +37,7 @@ public class MailHelper {
 				+ "See this meshblock at: https://parhelion.co.nz/operat/app?mesh="+block.getId()+"\n\n"
 				+ "The raw results are attached to this email";
 				
-		System.out.println("Going to send message: "+message);
+//		System.out.println("Going to send message: "+message);
 		mailSender.send(getContentWtihAttachementMessagePreparator(form, block, message));
 
 	}
@@ -68,8 +68,10 @@ public class MailHelper {
 				StringWriter sw = new StringWriter();
 				PrintWriter pw = new PrintWriter(sw);
 								
-				pw.println("Meshblock, Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17");
+				pw.println("Meshblock, whole_area, Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18, Q19, Q20, Q21");
 				pw.print(block.getId()+",");
+				pw.print(form.wholeArea ? "yes" : "no");
+				pw.print(",");
 				pw.print(form.q1 ? "yes" : "no");
 				pw.print(",");
 				pw.print(form.q2 ? "yes" : "no");
@@ -103,6 +105,14 @@ public class MailHelper {
 				pw.print(form.q16);
 				pw.print(",");
 				pw.print(form.q17);
+				pw.print(",");
+				pw.print(form.q18);
+				pw.print(",");
+				pw.print(form.q19);
+				pw.print(",");
+				pw.print(form.q20);
+				pw.print(",");
+				pw.print(form.q21);
 				pw.println();
 				pw.flush();
 				byte[] bytes = sw.getBuffer().toString().getBytes(StandardCharsets.UTF_8);

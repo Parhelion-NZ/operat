@@ -1,19 +1,35 @@
 package nz.co.parhelion.operat.dao;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.geotools.geometry.jts.JTS;
+import org.geotools.geometry.jts.JTSFactoryFinder;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.geometry.text.WKTParser;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 
+import nz.co.parhelion.operat.model.DisplayResult;
 import nz.co.parhelion.operat.model.Meshblock;
 import nz.co.parhelion.operat.model.OperatForm;
 
@@ -44,7 +60,8 @@ public class ResultsDAOJDBC implements ResultsDAO {
 				"trees_total_no", 
 				"external_beautification_none", "external_beautification_na",
 				"garden_moderate", "garden_poor", "garden_na",
-				"outside_property_moderate", "outside_property_poor"
+				"outside_property_moderate", "outside_property_poor",
+				"i_feel_safe", "people_friendly", "talk_people", "bus_stop"
 
 		};
 		Map<String, Object> args = new HashMap<String, Object>();
@@ -87,10 +104,10 @@ public class ResultsDAOJDBC implements ResultsDAO {
 		case INDUSTRIAL: args.put("outlook", 2); break;
 		}
 		
-		args.put("trees", form.q17);
-		args.put("external_beautification", form.q18);
-		args.put("garden", form.q19);
-		args.put("outside_property", form.q20);
+		args.put("trees", form.q18);
+		args.put("external_beautification", form.q19);
+		args.put("garden", form.q20);
+		args.put("outside_property", form.q21);
 
 		args.put("natural_elements_score", naturalElements);
 		args.put("incivilities_and_nuisance_score", incivilities);
@@ -101,15 +118,19 @@ public class ResultsDAOJDBC implements ResultsDAO {
 
 		args.put("whole_area", form.wholeArea ? 1 : 0);
 		
-		args.put("trees_total_no", form.q17No);
-		args.put("external_beautification_none", form.q18No);
-		args.put("external_beautification_na", form.q18Na);
-		args.put("garden_moderate", form.q19Mod);
-		args.put("garden_poor", form.q19Poor);
-		args.put("garden_na", form.q19Na);
-		args.put("outside_property_moderate", form.q20Mod);
-		args.put("outside_property_poor", form.q20Poor);
+		args.put("trees_total_no", form.q18No);
+		args.put("external_beautification_none", form.q19No);
+		args.put("external_beautification_na", form.q19Na);
+		args.put("garden_moderate", form.q20Mod);
+		args.put("garden_poor", form.q20Poor);
+		args.put("garden_na", form.q20Na);
+		args.put("outside_property_moderate", form.q21Mod);
+		args.put("outside_property_poor", form.q21Poor);
 
+		args.put("i_feel_safe", form.q14 ? 1 : 0);
+		args.put("people_friendly", form.q15 ? 1 : 0);
+		args.put("talk_people", form.q16 ? 1 : 0);
+		args.put("bus_stop", form.q17 ? 1 : 0);
 		
 		Number genkey = insert.withTableName("result").usingColumns(columnNames).usingGeneratedKeyColumns("id").executeAndReturnKey(args);
 		System.out.println("Generated an id of "+genkey.intValue());
@@ -117,14 +138,15 @@ public class ResultsDAOJDBC implements ResultsDAO {
 
 
 		String wkt = block.getGeometry().getCentroid().toString();
-		String epsg = "2193";
+		Integer epsg = 2193;
+		
 		try {
-			epsg = CRS.lookupIdentifier(block.getCrs(), true);
+			epsg = CRS.lookupEpsgCode(block.getCrs(), true);
 		} catch (FactoryException e) {
 			e.printStackTrace();
 		}
 		if (epsg == null) {
-			epsg = "2193";
+			epsg = 2193;
 		}
 		
 		
@@ -175,4 +197,67 @@ public class ResultsDAOJDBC implements ResultsDAO {
 		return addressFiles;
 	}
 	
+	@Override
+	public List<DisplayResult> getResults(ReferencedEnvelope bounds) {
+
+//		String query = "SELECT id, meshblock_id, operat_score, st_astext(st_transform(centroid, 4326)) FROM result";
+		
+//		WHERE ST_Transform(geom,4326) && ST_MakeEnvelope(174.85434354888253, -41.21126571507782, 174.93674100982003, -41.18995441845707, 4326)
+		
+		String whereClause = bounds != null ? "WHERE ST_Transform(geom, 4326) && ST_MakeEnvelope("+bounds.getMinX()+","+bounds.getMinY()+","+bounds.getMaxX()+","+bounds.getMaxY()+") " : "";
+		
+		//Only latest results
+		String query = "SELECT DISTINCT ON (meshblock_id) id, meshblock_id, operat_score, date_entered, ST_AsText(ST_Transform(centroid,4326)), ST_AsText(ST_Transform(geom,4326)), "
+				+ "natural_elements_score, incivilities_and_nuisance_score, navigation_and_mobility_score, territorial_score "
+				+ "FROM result "
+				+ whereClause
+				+ "ORDER BY meshblock_id, date_entered DESC;";
+
+		System.out.println(query);
+	    GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+
+	    WKTReader reader = new WKTReader(geometryFactory);
+	    
+		RowMapper<DisplayResult> rowMapper = (rs, rowNum) -> {
+			
+			DisplayResult result = new DisplayResult();
+			result.setResultId(rs.getInt(1));
+			result.setMeshblockId(rs.getInt(2));
+			result.setOperatScore(rs.getDouble(3));
+				
+			result.setNaturalElementsScore(rs.getDouble(7));
+			result.setIncivilitiesScore(rs.getDouble(8));
+			result.setNavigationScore(rs.getDouble(9));
+			result.setTerritorialScore(rs.getDouble(10));
+			Point point;
+			try {
+				point = (Point) reader.read(rs.getString(5));
+				result.setCentroid(point.toString());
+				result.setLat(point.getCoordinate().y);
+				result.setLng(point.getCoordinate().x);
+					
+				result.setGeom(rs.getString(6));
+				
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			return result;
+		};
+		
+		return jdbcTemplate.query(query, rowMapper);
+		
+	}
+	
 }
+
+/*
+SELECT DISTINCT ON (meshblock_id) id, meshblock_id, operat_score, date_entered, ST_AsText(ST_Transform(centroid,4326)),
+natural_elements_score, incivilities_and_nuisance_score, navigation_and_mobility_score, territorial_score 
+FROM result 
+WHERE ST_Transform(geom,4326) && ST_MakeEnvelope(174.85434354888253, -41.21126571507782, 174.93674100982003, -41.18995441845707, 4326)
+ORDER BY meshblock_id, date_entered DESC;
+
+
+-41.21126571507782, 174.85434354888253), (-41.18995441845707, 174.93674100982003
+
+*/

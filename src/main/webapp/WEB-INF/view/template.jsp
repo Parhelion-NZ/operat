@@ -3,7 +3,15 @@
 <head>
 <meta charset="utf-8" />
 <title>Welcome</title>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-104411886-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'UA-104411886-3');
+</script>
 <!-- Meta information-->
 <meta name="keywords"
 	content="operat, environment, Older Peoples External Residential Assessment Tool, Older People, External Residential Assessment, Residential Assessment Tool, assessment centre for ageing, ageing, research, OPAN, wales, cymru, older people, health, social care, CADR" />

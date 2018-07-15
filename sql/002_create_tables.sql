@@ -49,3 +49,8 @@ ALTER TABLE result ADD COLUMN garden_na INT;
 ALTER TABLE result ADD COLUMN outside_property_moderate INT;
 ALTER TABLE result ADD COLUMN outside_property_poor INT;
 
+ALTER TABLE result ADD COLUMN i_feel_safe INT;
+ALTER TABLE result ADD COLUMN people_friendly INT;
+ALTER TABLE result ADD COLUMN talk_people INT;
+ALTER TABLE result ADD COLUMN bus_stop INT;
+

@@ -4,6 +4,15 @@
 <title>Place Autocomplete Address Form</title>
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
 <meta charset="utf-8">
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-104411886-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-104411886-3');
+</script>
 <style>
 /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */

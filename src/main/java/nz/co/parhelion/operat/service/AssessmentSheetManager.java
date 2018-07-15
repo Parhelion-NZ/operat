@@ -87,13 +87,6 @@ public class AssessmentSheetManager {
 		table.addHeaderCell(new Cell(1, 2).add(new Paragraph("Number of properties")));
 		table.addHeaderCell(new Cell(1, 2).add(new Paragraph(Integer.toString(addresses.size())).setFontColor(Color.BLUE)));
 		
-//		table.addHeaderCell(new Cell(1, 1).add(new Paragraph("Date")));
-//		table.addHeaderCell(new Cell(1, 2).setPaddingLeft(80).add(new Paragraph("        ")));
-//		table.addHeaderCell(new Cell(1, 1).add(new Paragraph("Time of assessment")));
-//		table.addHeaderCell(new Cell(1, 1).add(new Paragraph("        ")));
-//		table.addHeaderCell(new Cell(1, 2).add(new Paragraph("Duration of assessment")));
-//		table.addHeaderCell(new Cell(1, 1).setPaddingLeft(80).add(new Paragraph("        ")));
-		
 		document.add(table);
 
 		document.add(new Paragraph());
@@ -120,9 +113,9 @@ public class AssessmentSheetManager {
 				"Are there sounds of nature (e.g. birdsong, water)?",
 				"Are there clear and easy to read road name signs?",
 				"Are there street lights?",
-				"Are there any unlit alleyways?",
+				"Are there any unlit streets or alleyways?",
 				"Are there instances of littering, dog fouling or broken glass?",
-				"Are there loud traffic or industrial noises?"
+				"Are there loud traffic, industrial or other noises?"
 		};
 		
 		for (int i = 0; i < questions.length; i++) {			
@@ -161,14 +154,16 @@ public class AssessmentSheetManager {
 		table.setBorder(Border.NO_BORDER);
 		table.setWidthPercent(100);
 
-		table.addHeaderCell(new Cell(1,2).setBorder(Border.NO_BORDER).add(new Paragraph("Tick yes or no for items 14 - 16").setFont(bold)));
+		table.addHeaderCell(new Cell(1,2).setBorder(Border.NO_BORDER).add(new Paragraph("Tick yes or no for items 14 - 17").setFont(bold)));
 		table.addHeaderCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph("YES").setFont(bold).setTextAlignment(TextAlignment.CENTER)));
 		table.addHeaderCell(new Cell().setBorder(Border.NO_BORDER).add(new Paragraph("NO").setFont(bold).setTextAlignment(TextAlignment.CENTER)));
 
 		questions = new String[]{
 				"I feel safe in this area",
 				"Most people in this area are friendly",
-				"I can talk to people in this area"
+				"I can talk to people in this area",
+				"Are there any bus stops or railway stations within the meshblock?"
+			
 		};
 		
 		for (int i = 0; i < questions.length; i++) {			
@@ -190,10 +185,10 @@ public class AssessmentSheetManager {
 		table.setKeepTogether(true);
 		
 		table.addHeaderCell(new Cell(2,1).setPadding(4).add(new Paragraph("Name or number of property")));
-		table.addHeaderCell(new Cell(1,2).setPadding(4).add(new Paragraph("17. Are there trees in the garden?")));
-		table.addHeaderCell(new Cell(1,3).setPadding(4).add(new Paragraph("18. Is there any external beautification?")));
-		table.addHeaderCell(new Cell(1,4).setPadding(4).add(new Paragraph("19. How well maintained is the garden/front yard?")));
-		table.addHeaderCell(new Cell(1,3).setPadding(4).add(new Paragraph("20. How well maintained is the outside of the property?")));
+		table.addHeaderCell(new Cell(1,2).setPadding(4).add(new Paragraph("18. Are there trees in the garden?")));
+		table.addHeaderCell(new Cell(1,3).setPadding(4).add(new Paragraph("19. Is there any external beautification?")));
+		table.addHeaderCell(new Cell(1,4).setPadding(4).add(new Paragraph("20. How well maintained is the garden/front yard?")));
+		table.addHeaderCell(new Cell(1,3).setPadding(4).add(new Paragraph("21. How well maintained is the outside of the property?")));
 		table.addHeaderCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)).add("YES"));
 		table.addHeaderCell(new Cell().add("NO"));
 		table.addHeaderCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)).add("YES"));
@@ -224,10 +219,10 @@ public class AssessmentSheetManager {
 		table.setSkipFirstHeader(true);
 		
 		table.addCell(new Cell(2,1).setPadding(4).add(new Paragraph("Name or number of property")));
-		table.addCell(new Cell(1,2).setPadding(4).add(new Paragraph("14. Are there trees in the garden?")));
-		table.addCell(new Cell(1,3).setPadding(4).add(new Paragraph("15. Is there any external beautification?")));
-		table.addCell(new Cell(1,4).setPadding(4).add(new Paragraph("16. How well maintained is the garden/front yard?")));
-		table.addCell(new Cell(1,3).setPadding(4).add(new Paragraph("17. How well maintained is the outside of the property?")));
+		table.addCell(new Cell(1,2).setPadding(4).add(new Paragraph("18. Are there trees in the garden?")));
+		table.addCell(new Cell(1,3).setPadding(4).add(new Paragraph("19. Is there any external beautification?")));
+		table.addCell(new Cell(1,4).setPadding(4).add(new Paragraph("20. How well maintained is the garden/front yard?")));
+		table.addCell(new Cell(1,3).setPadding(4).add(new Paragraph("21. How well maintained is the outside of the property?")));
 		table.addCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)).add("YES"));
 		table.addCell(new Cell().add("NO"));
 		table.addCell(new Cell().setBackgroundColor(new DeviceRgb(200, 200, 200)).add("YES"));
@@ -373,7 +368,7 @@ public class AssessmentSheetManager {
 		
 		int numAddresses = Math.max(addresses.size(), form.numberOfProperties);
 		
-		if (form.q17 > numAddresses || form.q18 > numAddresses || form.q19 > numAddresses || form.q20 > numAddresses) {
+		if (form.q18 > numAddresses || form.q19 > numAddresses || form.q20 > numAddresses || form.q21 > numAddresses) {
 			System.out.println("Count of properties cannot be more than the number of properties in the meshblock");
 			throw new InvalidResultsException("Count of properties cannot be more than the number of properties in the meshblock");
 		}
@@ -391,13 +386,13 @@ public class AssessmentSheetManager {
 
 
 
-	private float calculateTerritorial(OperatForm form) {
+	public float calculateTerritorial(OperatForm form) {
 		float parking = form.q9 == Q9.NOT_RESIDENTS ? 2 : 0;
 		float outlook = form.q13 == Q13.INDUSTRIAL ? 3 : 0;
 		
-		float beautificationPercentage = (float)form.q18 / (float)form.numberOfProperties;
-		float gardenPercentage = (float)form.q19 / (float)form.numberOfProperties;
-		float propertyPercentage = (float)form.q20 / (float)form.numberOfProperties;
+		float beautificationPercentage = (float)form.q19 / (float)form.numberOfProperties;
+		float gardenPercentage = (float)form.q20 / (float)form.numberOfProperties;
+		float propertyPercentage = (float)form.q21 / (float)form.numberOfProperties;
 		
 		float beautification = 0;
 		if (beautificationPercentage <= .2) {
@@ -433,7 +428,7 @@ public class AssessmentSheetManager {
 	
 	
 
-	private float calculateNavigation(OperatForm form) {
+	public float calculateNavigation(OperatForm form) {
 		float legibleSigns = form.q3 ? 0 : 2;
 		float lighting = form.q4 ? 0 : 1;
 		float alleys = form.q5 ? 1 : 0;
@@ -453,7 +448,7 @@ public class AssessmentSheetManager {
 		return domain * 40;
 	}
 
-	private float calculateIncivilities(OperatForm form) {
+	public float calculateIncivilities(OperatForm form) {
 		float litter = form.q6 ? 4 : 0;
 		float noise = form.q7 ? 3 : 0;
 		float vehicles = form.q8 == Q8.NONE ? 0 : form.q8 == Q8.ONE_TO_ELEVEN ? 0.5f : 1;
@@ -463,8 +458,8 @@ public class AssessmentSheetManager {
 		return domain * 20;
 	}
 
-	private float calculateNaturalElements(OperatForm form) {
-		float treePercentage = (float)form.q17 / (float)form.numberOfProperties;
+	public float calculateNaturalElements(OperatForm form) {
+		float treePercentage = (float)form.q18 / (float)form.numberOfProperties;
 		
 		float grass = form.q1 ? 0 : 2;
 		float nature = form.q2 ? 0 : 4;
