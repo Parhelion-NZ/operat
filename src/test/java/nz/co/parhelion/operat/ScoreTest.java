@@ -117,5 +117,37 @@ public class ScoreTest {
 		
 	}
 	
+	@Test
+	public void TestScoresRandom2() {
+		
+		OperatForm form = new OperatForm();
+		form.q1 = true;
+		form.q2 = true;
+		form.q3 = true;
+		form.q4 = true;
+		form.q5 = true;
+		form.q6 = false;
+		form.q7 = false;
+		form.q8 = Q8.ONE_TO_ELEVEN;
+		form.q9 = Q9.NOT_RESIDENTS;
+		form.q10 = Q10.CONTINUOUS;
+		form.q11 = Q11.STEEP;
+		form.q12 = Q12.WELL;
+		form.q13 = Q13.RESIDENTIAL;
+		form.q18 = 20;
+		form.q19 = 30;
+		form.q20 = 20;
+		form.q21 = 30;
+
+		form.numberOfProperties = 47;
+		AssessmentSheetManager mgr = new AssessmentSheetManager();
+		
+		assertEquals(3.33, mgr.calculateNaturalElements(form), 0.01);
+		assertEquals(3, mgr.calculateIncivilities(form), 0.01);
+		assertEquals(15.38, mgr.calculateNavigation(form), 0.01);
+		assertEquals(9.29, mgr.calculateTerritorial(form), 0.01);
+		
+	}
+	
 	
 }

@@ -20,5 +20,7 @@ public interface ResultsDAO {
 	public Map<String, String> getAddressFiles(Meshblock block);
 	
 	List<DisplayResult> getResults(ReferencedEnvelope bounds);
+
+	public DisplayResult getResults(Meshblock block);
 	
 }

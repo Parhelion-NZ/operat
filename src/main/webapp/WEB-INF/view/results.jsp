@@ -179,7 +179,74 @@ function isReady(){
 
 }
 
+function reloadOperatData( el, dataID ){
+	console.log('reloading', dataID);
+	$(".container--dataentry").addClass("js-hide");
+	$(".container--datacontent").removeClass("js-hide");
+	$.ajax({
+		url: "${pageContext.request.contextPath}/meshblock/" + dataID,
+		processData: false,
+		method: "post",
+		dataType: "json",
+		success: function( data, textStatus, jqXHR ){
+			showOperatData( el, data );
+		},
+		error: function( jqXHR, textStatus, errorThrown ){
+			showOperatData( el, 'Unfortunately your request failed; we could not retrieve the data.' );
+		}
+	})
+}
 
+function showOperatData( el, data ){
+	
+	// $(".container--dataentry").addClass( "js-hide" );
+	// $(".container--datacontent").addClass( "js-hide" );
+
+	// if ($(el).is(":visible")){
+	// 	$(el).html( formatOperatData( data ) );
+	// } else {
+	// 	$(el).html( formatOperatData( data ) );
+	// 	$(el).removeClass( "js-hide" ).fadeIn(200, function(){
+	// 		// Done
+	// 	});
+	// }
+
+	$(".container--homecontent").addClass( "js-hide" );
+
+	if ($(".container--datacontent").is(":visible")){
+		$(".container--datacontent").html( formatOperatData( data ) );
+	} else {
+		$(".container--datacontent").html( formatOperatData( data ) );
+		$(".container--datacontent").removeClass( "js-hide" ).fadeIn(200, function(){
+			// Done
+		});
+	}
+}
+
+function formatOperatData( data, options ){
+
+	var str = '<div id="actualResults">';
+		
+	str += '<h1>Showing results for <br />' + data.meshblockId/* + ', ' + data.added*/ + '</h1>';
+
+	str += '<table class="table--results">';
+
+	
+	str += '<tr><th class="tal">Natural Elements</th><td class="tar">' + data.naturalElementsScore.toFixed(1) + '</td></tr>';
+	str += '<tr><th class="tal">Incivilities and Nuisance</th><td class="tar">' + data.incivilitiesScore.toFixed(1) + '</td></tr>';
+	str += '<tr><th class="tal">Territorial Functioning</th><td class="tar">' + data.territorialScore.toFixed(1) + '</td></tr>';
+	str += '<tr><th class="tal">Navigation and Mobility</th><td class="tar">' + data.navigationScore.toFixed(1) + '</td></tr>';
+	str += '<tr><th class="divider" colspan="2">&nbsp;</td></tr>';
+	str += '<tr><th class="tal">Overall Domain Score</th><td class="tar">' + data.operatScore.toFixed(1) + '</td></tr>';
+	
+	str += '</table><div>';
+
+	// str += '<p><a href="#" onclick="alert(\'Coming soon\'); return false;" class="btn  btn--full  t--teal"><i class=" [ i--vac--right  pad ]  i--arrow--right"></i> Update the score</a></p>';
+
+	//str += '<p><a href="#" class="btn  btn--full  btn--primary  js-uploadbuttom"><i class="  [ i--vac--right  pad ] i--upload"></i> Upload Results Here</a></p>';
+
+	return str;
+}
 
 // Function used to perform the custom actions once the page has loaded
 // e.g. trigger actions, slideshows etc etc.
@@ -300,87 +367,6 @@ if($(".js-image").length > 0){
 	$('#js-mapfilter').on("submit", function(ev) {
 		ev.preventDefault();
 	});
-
-	function formatOperatData( data, options ){
-
-		var str = '';
-
-		str += '<h1>Showing results for <br />' + data.location + ', ' + data.added + '</h1>';
-
-		str += '<table class="table--results">';
-
-		if (data.components){
-			for(c = 0; c < data.components.length; c++){
-				if (data.components[c].field == "divider"){
-					str += '<tr><th class="divider" colspan="2">&nbsp;</td></tr>';
-				} else {
-					str += '<tr><th class="tal">' + data.components[c].field + '</th><td class="tar">' + data.components[c].value + '</td></tr>';
-				}
-			}
-		}
-		
-		str += '</table>';
-
-		// str += '<p><a href="#" onclick="alert(\'Coming soon\'); return false;" class="btn  btn--full  t--teal"><i class=" [ i--vac--right  pad ]  i--arrow--right"></i> Update the score</a></p>';
-
-		str += '<p><a href="#" class="btn  btn--full  btn--primary  js-uploadbuttom"><i class="  [ i--vac--right  pad ] i--upload"></i> Upload Results Here</a></p>';
-
-		return str;
-	}
-
-
-
-
-
-	function showOperatData( el, data ){
-		
-		// $(".container--dataentry").addClass( "js-hide" );
-		// $(".container--datacontent").addClass( "js-hide" );
-
-		// if ($(el).is(":visible")){
-		// 	$(el).html( formatOperatData( data ) );
-		// } else {
-		// 	$(el).html( formatOperatData( data ) );
-		// 	$(el).removeClass( "js-hide" ).fadeIn(200, function(){
-		// 		// Done
-		// 	});
-		// }
-
-		$(".container--homecontent").addClass( "js-hide" );
-
-		if ($(".container--datacontent").is(":visible")){
-			$(".container--datacontent").html( formatOperatData( data ) );
-		} else {
-			$(".container--datacontent").html( formatOperatData( data ) );
-			$(".container--datacontent").removeClass( "js-hide" ).fadeIn(200, function(){
-				// Done
-			});
-		}
-	}
-
-
-
-
-
-	function reloadOperatData( el, dataID ){
-		$(".container--dataentry").addClass("js-hide");
-		$(".container--datacontent").removeClass("js-hide");
-		$.ajax({
-			url: "${pageContext.request.contextPath}/results/" + dataID,
-			processData: false,
-			method: "post",
-			dataType: "json",
-			success: function( data, textStatus, jqXHR ){
-				showOperatData( el, data );
-			},
-			error: function( jqXHR, textStatus, errorThrown ){
-				showOperatData( el, 'Unfortunately your request failed; we could not retrieve the data.' );
-			}
-		})
-	}
-
-
-
 
 
 	loadJS( "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js", function(){ 
@@ -574,7 +560,7 @@ if($(".js-image").length > 0){
 
 						map = new google.maps.Map(document.getElementById('map'), {
 							zoom: 14,
-							minZoom: 5,
+							minZoom: 9,
 							center: latLng,
 							mapTypeId: google.maps.MapTypeId.ROADMAP,
 							disableDefaultUI: true,
@@ -665,12 +651,12 @@ if ($('.js-fancybox').length > 0){
 
 
 // DoubleTapToGo
-if ($(".nav").length > 0){
-	loadJS( "/js/libs/doubletaptogo.js", function(){ 
-		consoleWrapper("Loaded js/libs/doubletagtogo.js"); 
-		$('.nav li:has(ul)').doubleTapToGo();
-	});
-}
+//if ($(".nav").length > 0){
+//	loadJS( "/js/libs/doubletaptogo.js", function(){ 
+//		consoleWrapper("Loaded js/libs/doubletagtogo.js"); 
+//		$('.nav li:has(ul)').doubleTapToGo();
+//	});
+//}
 
 
 // Google Recaptcha
@@ -1116,10 +1102,27 @@ function drawMesh(location, map) {
 			var content = "<h2>Selected meshblock "+response.id+"</h2>";
 			if (hasAddresses) {
 				content += "<p>This meshblock has "+response.addresses.length+" properties. <a href=\"assessPdf/"+response.id+"\">Display a pre-populated form</a> which can be saved or printed.</p>";
+				
+				content += '<p>Instructions on how to carry out an OPERAT assessment are available <a href="https://www.operat.co.uk/getfile/documents/manuals/OPERAT-Manual-New-Zealand.pdf">here</a>.</p>';
+				content += '<p>When you have completed your assessments you can enter your results <a href="${pageContext.request.contextPath}/assessForm/">here</a>.  The computer will add up the scores and send them to us. Or post your completed forms to: ';
+				content += '<address style="padding-left: 5px;">Christine Stephens<br/>Freepost 86<br/>School of Psychology<br/>Massey University, PB 11 222<br/>Palmerston North, 4442</address>';
 			} else {
 				content += "<p>We do not have a record of any properties in this location.  This could be because the local authority has not supplied this data, or there are no residential properties. Please contact us to request that this is populated.</p>";
 			}
-			$('#resultsPlaceholder').html(content);
+
+//			$(".container--datacontent").addClass( "js-hide" );
+			$(".container--homecontent").addClass( "js-hide" );
+
+			if ($(".container--datacontent").is(":visible")){
+				$('.container--datacontent').html(content);
+			} else {
+				$('.container--datacontent').html(content);
+				$(".container--datacontent").removeClass( "js-hide" ).fadeIn(200, function(){
+					// Done
+				});
+			
+			//$('#resultsPlaceholder').html(content);
+			}
     	}
     });
 
@@ -1247,7 +1250,7 @@ function drawHeatMap(results, map) {
 		
 		poly.setMap(map);
 		
-		locations.push({ position: { lat: val.lat, lng: val.lng }, title: val.meshblockId , dataid: val.resultId });
+		locations.push({ position: { lat: val.lat, lng: val.lng }, title: val.meshblockId, meshblockId: val.meshblockId, dataid: val.resultId });
 	});
 	
 /* 	heatmaps.data = {
@@ -1284,7 +1287,7 @@ function drawHeatMap(results, map) {
         position: location.position,
         // label: location.title,
         title: location.title,
-        dataID: location.dataid,
+        dataID: location.meshblockId,
         icon: "${pageContext.request.contextPath}/resources/img/map-pin.png"
       });
     });
@@ -1430,7 +1433,7 @@ for(c = 0; c < jsFiles.length; c++){
 		<div class="header--col  header--logo  tal">
 
 
-			<a class="logo  logo--operat" href="/operat/">
+			<a class="logo  logo--operat" href="${pageContext.request.contextPath}/">
 				<img class="logo__image" src="https://www.operat.co.uk/getfile/design/operat-logo.png" 
 					 alt="OPERAT" 
 					 title="OPERAT (Home)" />
@@ -1465,7 +1468,7 @@ for(c = 0; c < jsFiles.length; c++){
 			<i class="i--right i--nav i--more"></i> <span class="nav__toggle__label">Menu</span>
 		</a>
 		<ul class="lvl-0"><li class="lvl-0-item selected" >
-                    <a href="/operat/"  class="lvl-0-link"  >Map</a></li><li class="lvl-0-item has-child" >
+                    <a href="${pageContext.request.contextPath}/"  class="lvl-0-link"  >Map</a></li><li class="lvl-0-item has-child" >
                     <a href="https://www.operat.co.uk/background"  class="lvl-0-link" aria-haspopup="true"  >Background</a><ul class="lvl-1"><li class="lvl-1-item" >
                     <a href="${pageContext.request.contextPath}/faqs"  class="lvl-1-link"  >Frequently Asked Questions</a></li></ul></li><li class="lvl-0-item has-child" >
                     <a href="#"  class="lvl-0-link" aria-haspopup="true"  >Using the Tool</a><ul class="lvl-1"><li class="lvl-1-item" >

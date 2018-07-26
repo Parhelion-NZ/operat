@@ -362,4 +362,10 @@ public class MeshblockManager {
 		
 	}
 	
+	public DisplayResult getResults(Meshblock block) {
+		
+		return dao.getResults(block);
+		
+	}
+	
 } 

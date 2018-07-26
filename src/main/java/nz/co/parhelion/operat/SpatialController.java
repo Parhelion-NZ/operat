@@ -67,6 +67,13 @@ public class SpatialController {
 		return dto;
 	}
 	
+	@RequestMapping("/meshblock/{meshblock}")
+	@ResponseBody
+	public DisplayResult getMeshblockResults(@PathVariable int meshblock) throws IOException {
+		Meshblock block = manager.getMeshblockById(meshblock);
+		return manager.getResults(block);
+	}
+	
 	@RequestMapping("/assessPdf/{meshblock}") 
 	@ResponseBody
 	public void getAssessmentPdf(@PathVariable int meshblock, HttpServletResponse response) throws IOException {
@@ -142,13 +149,12 @@ public class SpatialController {
 	@RequestMapping("/results")
 	@ResponseBody
 	public List<DisplayResult> getResults() {
-		return manager.getResults(null);
+		return manager.getResults((ReferencedEnvelope)null);
 	}
 	
 	@RequestMapping("/results/{lat1},{lng1}/{lat2},{lng2}/")
 	@ResponseBody
 	public List<DisplayResult> getResults(@PathVariable double lat1, @PathVariable double lng1, @PathVariable double lat2, @PathVariable double lng2) {
-		System.out.println("Lng2 "+lng2);
 		ReferencedEnvelope env = manager.getLatLngEnvelope(lat1, lat2, lng1, lng2);
 		
 		return manager.getResults(env);

@@ -6,17 +6,10 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.geometry.text.WKTParser;
 import org.geotools.referencing.CRS;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -246,6 +239,52 @@ public class ResultsDAOJDBC implements ResultsDAO {
 		
 		return jdbcTemplate.query(query, rowMapper);
 		
+	}
+	
+	@Override
+	public DisplayResult getResults(Meshblock block) {
+
+		String whereClause = "WHERE meshblock_id = "+block.getId();
+		
+		//Only latest results
+		String query = "SELECT DISTINCT ON (meshblock_id) id, meshblock_id, operat_score, date_entered, ST_AsText(ST_Transform(centroid,4326)), ST_AsText(ST_Transform(geom,4326)), "
+				+ "natural_elements_score, incivilities_and_nuisance_score, navigation_and_mobility_score, territorial_score "
+				+ "FROM result "
+				+ whereClause
+				+ "ORDER BY meshblock_id, date_entered DESC;";
+
+		System.out.println(query);
+	    GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory();
+
+	    WKTReader reader = new WKTReader(geometryFactory);
+	    
+		RowMapper<DisplayResult> rowMapper = (rs, rowNum) -> {
+			
+			DisplayResult result = new DisplayResult();
+			result.setResultId(rs.getInt(1));
+			result.setMeshblockId(rs.getInt(2));
+			result.setOperatScore(rs.getDouble(3));
+				
+			result.setNaturalElementsScore(rs.getDouble(7));
+			result.setIncivilitiesScore(rs.getDouble(8));
+			result.setNavigationScore(rs.getDouble(9));
+			result.setTerritorialScore(rs.getDouble(10));
+			Point point;
+			try {
+				point = (Point) reader.read(rs.getString(5));
+				result.setCentroid(point.toString());
+				result.setLat(point.getCoordinate().y);
+				result.setLng(point.getCoordinate().x);
+					
+				result.setGeom(rs.getString(6));
+				
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			return result;
+		};
+		
+		return jdbcTemplate.queryForObject(query, rowMapper);
 	}
 	
 }

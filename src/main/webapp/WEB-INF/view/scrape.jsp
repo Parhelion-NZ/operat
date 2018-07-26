@@ -568,7 +568,7 @@ if($(".js-image").length > 0){
 
 						map = new google.maps.Map(document.getElementById('map'), {
 							zoom: 14,
-							minZoom: 5,
+							minZoom: 9,
 							center: latLng,
 							mapTypeId: google.maps.MapTypeId.ROADMAP,
 							disableDefaultUI: true,
@@ -1168,7 +1168,7 @@ for(c = 0; c < jsFiles.length; c++){
 		<div class="header--col  header--logo  tal">
 
 
-			<a class="logo  logo--operat" href="/operat/">
+			<a class="logo  logo--operat" href="${pageContext.request.contextPath}/">
 				<img class="logo__image" src="https://www.operat.co.uk/getfile/design/operat-logo.png" 
 					 alt="OPERAT" 
 					 title="OPERAT (Home)" />
@@ -1203,7 +1203,7 @@ for(c = 0; c < jsFiles.length; c++){
 			<i class="i--right i--nav i--more"></i> <span class="nav__toggle__label">Menu</span>
 		</a>
 		<ul class="lvl-0"><li class="lvl-0-item selected" >
-                    <a href="/operat/"  class="lvl-0-link"  >Map</a></li><li class="lvl-0-item has-child" >
+                    <a href="${pageContext.request.contextPath}/"  class="lvl-0-link"  >Map</a></li><li class="lvl-0-item has-child" >
                     <a href="https://www.operat.co.uk/background"  class="lvl-0-link" aria-haspopup="true"  >Background</a><ul class="lvl-1"><li class="lvl-1-item" >
                     <a href="${pageContext.request.contextPath}/faqs"  class="lvl-1-link"  >Frequently Asked Questions</a></li></ul></li><li class="lvl-0-item has-child" >
                     <a href="#"  class="lvl-0-link" aria-haspopup="true"  >Using the Tool</a><ul class="lvl-1"><li class="lvl-1-item" >

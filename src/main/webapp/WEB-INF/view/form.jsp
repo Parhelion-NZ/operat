@@ -61,7 +61,7 @@
 
 			<div class="operat-row">
 				<div class="header--col  header--logo  tal">
-					<a class="logo  logo--operat" href="/operat/"> <img
+					<a class="logo  logo--operat" href="${pageContext.request.contextPath}/"> <img
 						class="logo__image"
 						src="https://www.operat.co.uk/getfile/design/operat-logo.png"
 						alt="OPERAT" title="OPERAT (Home)" />
@@ -97,7 +97,7 @@
 					<span class="nav__toggle__label">Menu</span>
 				</a>
 				<ul class="lvl-0">
-					<li class="lvl-0-item selected"><a href="/operat/"
+					<li class="lvl-0-item selected"><a href="${pageContext.request.contextPath}/"
 						class="lvl-0-link">Map</a></li>
 					<li class="lvl-0-item has-child"><a
 						href="https://www.operat.co.uk/background" class="lvl-0-link"
