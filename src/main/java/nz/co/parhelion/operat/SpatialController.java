@@ -53,6 +53,11 @@ public class SpatialController {
 		return new TestMessage(name);
 	}
 	
+	@RequestMapping("/template")
+	public String template() {
+		return "reset";
+	}
+	
 	
 	@RequestMapping("/meshblock")
 	@ResponseBody
@@ -162,6 +167,12 @@ public class SpatialController {
 	
 	@RequestMapping("/scores")
 	public String showResults() {
+		return "results";
+	}
+	
+	@RequestMapping("/scores/{meshblock}")
+	public String showResults(@PathVariable int meshblock, Model model) {
+		model.addAttribute("meshblock", meshblock);
 		return "results";
 	}
 	

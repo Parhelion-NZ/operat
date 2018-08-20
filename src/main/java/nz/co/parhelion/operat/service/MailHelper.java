@@ -34,7 +34,7 @@ public class MailHelper {
 				+ "Incivilities score: "+incivilities+"\n"
 				+ "Navigation score: "+navigation+"\n"
 				+ "Territorial score: "+territorial+"\n\n"
-				+ "See this meshblock at: https://parhelion.co.nz/operat/app?mesh="+block.getId()+"\n\n"
+				+ "See this meshblock at: https://operat.co.nz/scores/"+block.getId()+"\n\n"
 				+ "The raw results are attached to this email";
 				
 //		System.out.println("Going to send message: "+message);
@@ -68,7 +68,7 @@ public class MailHelper {
 				StringWriter sw = new StringWriter();
 				PrintWriter pw = new PrintWriter(sw);
 								
-				pw.println("Meshblock, whole_area, Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18, Q19, Q20, Q21");
+				pw.println("Meshblock, whole_area, Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17");
 				pw.print(block.getId()+",");
 				pw.print(form.wholeArea ? "yes" : "no");
 				pw.print(",");
@@ -97,14 +97,6 @@ public class MailHelper {
 				pw.print(form.q12);
 				pw.print(",");
 				pw.print(form.q13);
-				pw.print(",");
-				pw.print(form.q14);
-				pw.print(",");
-				pw.print(form.q15);
-				pw.print(",");
-				pw.print(form.q16);
-				pw.print(",");
-				pw.print(form.q17);
 				pw.print(",");
 				pw.print(form.q18);
 				pw.print(",");
