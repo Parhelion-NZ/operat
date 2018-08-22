@@ -12,7 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<geotools.version>17.3</geotools.version>
+		<geotools.version>19.2</geotools.version>
 		<spring.version>4.3.12.RELEASE</spring.version>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 	</properties>
@@ -129,6 +129,12 @@
 		    <groupId>javax.servlet</groupId>
 		    <artifactId>jstl</artifactId>
 		    <version>1.2</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.tiles</groupId>
+		    <artifactId>tiles-jsp</artifactId>
+		    <version>3.0.8</version>
 		</dependency>
 
 		<dependency>
