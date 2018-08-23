@@ -1477,7 +1477,9 @@ function verifyStep2(){
 	<div class="map-filter">
 		<form action="/" method="get" class="form  form--mapfilter  js-mapfilter  row" id="js-mapfilter">
 			<fieldset class="primaryoptions  col  lg-7-16  md-7-16  sm-7-16">
-
+				<div class="form-row  form-row--toggleoption" >
+					Type an address, or click on the map to select a meshblock.				
+				</div>
 				<div class="form-row  form-row--withborder">
 					<div class="input-group">
 						<label for="location" class="hide-visually">Address</label>
@@ -1490,9 +1492,6 @@ function verifyStep2(){
 					</div>
 				</div>
 
-				<div class="form-row  form-row--toggleoption" >
-					Type an address, or click on the map to select a meshblock.				
-				</div>
 
 			</fieldset>
 

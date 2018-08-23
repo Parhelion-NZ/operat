@@ -1,6 +1,6 @@
 <footer class="region  region--footer">
 
-		<div class="container--footer">
+		<div class="px5 container--footer">
 
 
 			<div class="footer-details [ col  lg-10-16 md-10-16 ] ">

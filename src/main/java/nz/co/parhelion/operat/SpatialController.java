@@ -74,7 +74,7 @@ public class SpatialController {
 		return manager.getResults(block);
 	}
 	
-	@RequestMapping("/assessPdf/{meshblock}") 
+	@RequestMapping("/assessPdf/{meshblock}.pdf") 
 	@ResponseBody
 	public void getAssessmentPdf(@PathVariable int meshblock, HttpServletResponse response) throws IOException {
 		Meshblock block = manager.getMeshblockById(meshblock);
@@ -138,12 +138,12 @@ public class SpatialController {
 	
 	@RequestMapping("/")
 	public String getMainPage() {
-		return "scrape";
+		return "results";
 	}
 	
 	@RequestMapping("/app")
 	public String index() {
-		return "scrape";
+		return "results";
 	}
 	
 	@RequestMapping("/results")

@@ -28,7 +28,6 @@
 var Operat = (function() {
 
 	var reloadOperatData = function(el, dataID) {
-		console.log('reloading', dataID);
 		$(".container--dataentry").addClass("js-hide");
 		$(".container--datacontent").removeClass("js-hide");
 		$.ajax({
@@ -88,11 +87,9 @@ var Operat = (function() {
 
 		resizeMap(960);
 		var self = Operat;
-		console.log('initmap self is ', self);
-
+		
 		loadJS( "https://maps.googleapis.com/maps/api/js?key=AIzaSyBB22BIjIweQfxWedQtJnYuIWJCN7-LpK0&libraries=visualization,places", function(){
 
-			console.log('Loaded Google Maps API');
 			var heatmapData = [];
 
 			var autocomplete = new google.maps.places.Autocomplete((document.getElementById('location')),
@@ -281,7 +278,8 @@ var Operat = (function() {
 						mapTypeId: google.maps.MapTypeId.ROADMAP,
 						disableDefaultUI: true,
 						zoomControl: true,
-						styles: styles
+						styles: styles,
+						gestureHandling: 'greedy'
 					});		
 					var map = self.map;
 
@@ -292,13 +290,10 @@ var Operat = (function() {
 
 					google.maps.event.addListener(self.map, "bounds_changed", function() {
 
-						console.log("map bounds ",map.getBounds().toJSON());
-
 						var sw = map.getBounds().getSouthWest();
 						var url = contextRoot + '/results/'+sw.lng()+','+sw.lat()+'/';
 						var ne = map.getBounds().getNorthEast();
 						url += ne.lng() + ','+ne.lat() + '/';
-						console.log(url);
 					});
 
 					autocomplete.addListener('place_changed', function() {
@@ -312,7 +307,6 @@ var Operat = (function() {
 						url: contextRoot + '/results',
 						success : function(response) {
 
-							console.log(response);
 							MapUtils.drawHeatMap(response, map);
 
 						}
@@ -344,10 +338,10 @@ var Operat = (function() {
 				var hasAddresses = response.addresses.length;
 				var content = "<h2>Selected meshblock "+response.id+"</h2>";
 				if (hasAddresses) {
-					content += "<p>This meshblock has "+response.addresses.length+" properties. <a href=\"assessPdf/"+response.id+"\">Display a pre-populated form</a> which can be saved or printed.</p>";
+					content += "<p>This meshblock has "+response.addresses.length+" properties. <a href=\""+contextRoot+"/assessPdf/"+response.id+".pdf\">Display a pre-populated form</a> which can be saved or printed.</p>";
 
 					content += '<p>Instructions on how to carry out an OPERAT assessment are available <a href="https://www.operat.co.uk/getfile/documents/manuals/OPERAT-Manual-New-Zealand.pdf">here</a>.</p>';
-					content += '<p>When you have completed your assessments you can enter your results <a href="${pageContext.request.contextPath}/assessForm/">here</a>.  The computer will add up the scores and send them to us. Or post your completed forms to: ';
+					content += '<p>When you have completed your assessments you can enter your results <a href="'+contextRoot+'/assessForm/">here</a>.  The computer will add up the scores and send them to us. Or post your completed forms to: ';
 					content += '<address style="padding-left: 5px;">Christine Stephens<br/>Freepost 86<br/>School of Psychology<br/>Massey University, PB 11 222<br/>Palmerston North, 4442</address>';
 				} else {
 					content += "<p>We do not have a record of any properties in this location.  This could be because the local authority has not supplied this data, or there are no residential properties. Please contact us to request that this is populated.</p>";
@@ -371,7 +365,8 @@ var Operat = (function() {
 	
 	return {
 		initMap: initMap,
-		drawMesh: drawMesh
+		drawMesh: drawMesh,
+		reloadOperatData : reloadOperatData
 	};
 
 })(); 			//end operat
@@ -384,6 +379,15 @@ var MapUtils = {
 	
 	heatmaps : {}, 
 	
+	removeExistingPolys : function() {
+		if (this.existingPolys.length > 0) {
+			this.existingPolys[0].setMap(null);
+			this.existingPolys = [];
+		}
+		this.ptsArray = [];
+	},
+
+	
 	drawMeshblock : function(wkt, map) {
 		this.removeExistingPolys();
 		//using regex, we will get the indivudal Rings
@@ -394,22 +398,22 @@ var MapUtils = {
 			rings.push( results[1] );
 		}
 
-		var polyLen=Rings.length;
+		var polyLen=rings.length;
 
 		//now we need to draw the polygon for each of inner rings, but reversed
 		for(var i=0;i<polyLen;i++){
-			MapUtils.addPoints(Rings[i]);
+			MapUtils.addPoints(rings[i]);
 		}
 
 		var poly = new google.maps.Polygon({
-		    paths: ptsArray,
+		    paths: this.ptsArray,
 		    strokeColor: '#1E90FF',
 		    strokeOpacity: 0.8,
 		    strokeWeight: 2,
 		    fillColor: '#1E90FF',
 		    fillOpacity: 0.35
 		});
-		
+
 		poly.setMap(map);
 		map.fitBounds(MapUtils.getPolyBounds(poly));
 		this.existingPolys.push(poly);
@@ -448,7 +452,6 @@ var MapUtils = {
 	},
 	
 	drawHeatMap : function(results, map) {
-		
 		var self = this;
 		
 		var locations = [];
@@ -504,7 +507,7 @@ var MapUtils = {
 			}
 			
 			var Rings = [];
-			ptsArray = [];
+			MapUtils.ptsArray = [];
 			var parsed;
 			while( parsed = regex.exec(val.geom) ) {
 				Rings.push( parsed[1] );
@@ -517,7 +520,7 @@ var MapUtils = {
 			}
 
 			var poly = new google.maps.Polygon({
-			    paths: ptsArray,
+			    paths: MapUtils.ptsArray,
 			    strokeColor: colourOverall,
 			    strokeOpacity: 0.8,
 			    strokeWeight: 2,
@@ -537,15 +540,13 @@ var MapUtils = {
 			poly.setMap(map);
 			locations.push({ position: { lat: val.lat, lng: val.lng }, title: val.meshblockId, meshblockId: val.meshblockId, dataid: val.resultId });
 		});
-		console.log("Map is ",map);
 		var markers = locations.map(function(location, i) {
-			console.log(location);
 			return new google.maps.Marker({
 		        position: location.position,
 		        // label: location.title,
 		        title: ""+location.title,
 		        dataID: location.meshblockId,
-		        icon: "${pageContext.request.contextPath}/resources/img/map-pin.png"
+		        icon: contextRoot + "/resources/img/map-pin.png"
 			});
 		});
 
@@ -554,7 +555,7 @@ var MapUtils = {
 			markers[m].setMap(map);
 
 			markers[m].addListener( "click", function() {
-				reloadOperatData( "#container--datacontent", parseInt( this.dataID ) );
+				Operat.reloadOperatData( "#container--datacontent", parseInt( this.dataID ) );
 				map.panTo( this.getPosition() )
 			});
 
@@ -597,7 +598,7 @@ function resizeMap( minWidth ){
 			var header = $(".region--header").outerHeight();
 			var footer = $(".region--footer").outerHeight();
 			var mapHeight = parseFloat($(window).height()) - parseFloat(header) - parseFloat(footer);
-
+	
 			if ( parseFloat($(".region--content").height()) < parseFloat(mapHeight)){
 				$(".region--content").css( "min-height", mapHeight + "px" );
 			}
@@ -605,3 +606,11 @@ function resizeMap( minWidth ){
 	}
 }
 
+$(function() {
+	$(".js-toggle").each(function(){
+		$(this).on("click", function( e ){
+			e.preventDefault();
+			$( $(this).attr("data-target") ).toggleClass( $(this).attr("data-toggleclass") );
+		});
+	});
+});

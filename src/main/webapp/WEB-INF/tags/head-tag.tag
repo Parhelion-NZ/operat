@@ -43,7 +43,7 @@ var contextRoot = '${pageContext.request.contextPath}';
 
 
 <!-- stylesheets -->
-<link rel="stylesheet" href="resources/styles/operat.css" type="text/css" media="all" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/styles/operat.css" type="text/css" media="all" />
 
 
 <!-- other icons -->
